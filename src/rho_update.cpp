@@ -12,7 +12,7 @@ Rcpp::List rho_update(double rho_old,
                       arma::mat neighbors,
                       arma::mat eta,
                       double sigma2_eta_old,
-                      arma::mat corr_inv,
+                      arma::mat corr_inv_eta,
                       double a_rho,
                       double b_rho,
                       double metrop_var_rho_trans,
@@ -36,7 +36,7 @@ double sign_old = 0.00;
 log_det(MCAR_info_old, sign_old, (rho_old*MCAR + (1.00 - rho_old)*eye(s, s)));
 
 double second = 0.50*m*MCAR_info_old - 
-                (1.00/sigma2_eta_old)*0.50*dot(eta_full, kron((rho_old*MCAR + (1.00 - rho_old)*eye(s, s)), corr_inv)*eta_full) + 
+                (1.00/sigma2_eta_old)*0.50*dot(eta_full, kron((rho_old*MCAR + (1.00 - rho_old)*eye(s, s)), corr_inv_eta)*eta_full) + 
                 rho_trans_old -
                 2.00*log(1 + exp(rho_trans_old));
 
@@ -49,7 +49,7 @@ double sign = 0.00;
 log_det(MCAR_info, sign, (rho*MCAR + (1.00 - rho)*eye(s, s)));
 
 double first = 0.50*m*MCAR_info - 
-               (1.00/sigma2_eta_old)*0.50*dot(eta_full, kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv)*eta_full) + 
+               (1.00/sigma2_eta_old)*0.50*dot(eta_full, kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv_eta)*eta_full) + 
                rho_trans -
                2.00*log(1.00 + exp(rho_trans));
 

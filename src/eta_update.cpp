@@ -17,7 +17,7 @@ arma::mat eta_update(arma::mat eta_old,
                      arma::vec theta,
                      double rho_old,
                      double sigma2_eta_old,
-                     arma::mat corr_inv){
+                     arma::mat corr_inv_eta){
   
 int n = w.size();
 int m = z.n_cols;
@@ -38,14 +38,20 @@ for(int j = 0; j < s; ++j){
       }
    arma::uvec ids = find(site_id == (j + 1));
    arma::mat cov_eta = inv_sympd(z_trans.cols(ids)*(w_mat.rows(ids)%z.rows(ids)) +
-                                 ((rho_old*sum(neighbors.row(j)) + 1.00 - rho_old)/sigma2_eta_old)*corr_inv);
+                                 ((rho_old*sum(neighbors.row(j)) + 1.00 - rho_old)/sigma2_eta_old)*corr_inv_eta);
    arma::vec mean_eta = cov_eta*(z_trans.cols(ids)*(w.elem(ids)%(gamma.elem(ids) - x.rows(ids)*beta - z.rows(ids)*theta)) +
-                                 ((rho_old/sigma2_eta_old)*corr_inv)*mean_eta_temp);
+                                 ((rho_old/sigma2_eta_old)*corr_inv_eta)*mean_eta_temp);
   
    arma::mat ind_norms = arma::randn(1, m);
    eta.row(j) = trans(mean_eta + 
                       trans(ind_norms*arma::chol(cov_eta)));
 
+   }
+
+//Centering for Stability (MCAR Style)
+for(int j = 0; j < m; ++ j){
+   eta.col(j) = eta.col(j) - 
+                mean(eta.col(j));
    }
 
 return(eta);

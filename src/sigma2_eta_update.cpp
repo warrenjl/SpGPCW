@@ -9,7 +9,7 @@ using namespace Rcpp;
 double sigma2_eta_update(arma::mat neighbors,
                          arma::mat eta,
                          double rho,
-                         arma::mat corr_inv,
+                         arma::mat corr_inv_eta,
                          double alpha_sigma2_eta,
                          double beta_sigma2_eta){
   
@@ -27,7 +27,7 @@ double alpha_sigma2_eta_update = 0.50*(s*m) +
 
 arma::mat MCAR = diagmat(diag_neighbors) - 
                  neighbors;
-double beta_sigma2_eta_update = 0.50*dot(eta_full, kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv)*eta_full) + 
+double beta_sigma2_eta_update = 0.50*dot(eta_full, kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv_eta)*eta_full) + 
                                 beta_sigma2_eta;
 
 double sigma2_eta = 1.00/R::rgamma(alpha_sigma2_eta_update,
