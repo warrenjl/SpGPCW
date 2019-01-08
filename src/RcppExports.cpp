@@ -132,6 +132,49 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rcpparma_hello_world
+arma::mat rcpparma_hello_world();
+RcppExport SEXP _SpGPCW_rcpparma_hello_world() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(rcpparma_hello_world());
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpparma_outerproduct
+arma::mat rcpparma_outerproduct(const arma::colvec& x);
+RcppExport SEXP _SpGPCW_rcpparma_outerproduct(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpparma_outerproduct(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpparma_innerproduct
+double rcpparma_innerproduct(const arma::colvec& x);
+RcppExport SEXP _SpGPCW_rcpparma_innerproduct(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpparma_innerproduct(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rcpparma_bothproducts
+Rcpp::List rcpparma_bothproducts(const arma::colvec& x);
+RcppExport SEXP _SpGPCW_rcpparma_bothproducts(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::colvec& >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(rcpparma_bothproducts(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rho_update
 Rcpp::List rho_update(double rho_old, arma::mat neighbors, arma::mat eta, double sigma2_eta_old, arma::mat corr_inv, double a_rho, double b_rho, double metrop_var_rho_trans, int acctot_rho_trans);
 RcppExport SEXP _SpGPCW_rho_update(SEXP rho_oldSEXP, SEXP neighborsSEXP, SEXP etaSEXP, SEXP sigma2_eta_oldSEXP, SEXP corr_invSEXP, SEXP a_rhoSEXP, SEXP b_rhoSEXP, SEXP metrop_var_rho_transSEXP, SEXP acctot_rho_transSEXP) {
@@ -237,6 +280,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpGPCW_neg_two_loglike_update", (DL_FUNC) &_SpGPCW_neg_two_loglike_update, 7},
     {"_SpGPCW_phi_update", (DL_FUNC) &_SpGPCW_phi_update, 12},
     {"_SpGPCW_rcpp_pgdraw", (DL_FUNC) &_SpGPCW_rcpp_pgdraw, 2},
+    {"_SpGPCW_rcpparma_hello_world", (DL_FUNC) &_SpGPCW_rcpparma_hello_world, 0},
+    {"_SpGPCW_rcpparma_outerproduct", (DL_FUNC) &_SpGPCW_rcpparma_outerproduct, 1},
+    {"_SpGPCW_rcpparma_innerproduct", (DL_FUNC) &_SpGPCW_rcpparma_innerproduct, 1},
+    {"_SpGPCW_rcpparma_bothproducts", (DL_FUNC) &_SpGPCW_rcpparma_bothproducts, 1},
     {"_SpGPCW_rho_update", (DL_FUNC) &_SpGPCW_rho_update, 9},
     {"_SpGPCW_sigma2_eta_update", (DL_FUNC) &_SpGPCW_sigma2_eta_update, 6},
     {"_SpGPCW_sigma2_theta_update", (DL_FUNC) &_SpGPCW_sigma2_theta_update, 4},
