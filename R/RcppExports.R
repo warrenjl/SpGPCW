@@ -25,22 +25,6 @@ rcpp_pgdraw <- function(b, c) {
     .Call(`_SpGPCW_rcpp_pgdraw`, b, c)
 }
 
-rcpparma_hello_world <- function() {
-    .Call(`_SpGPCW_rcpparma_hello_world`)
-}
-
-rcpparma_outerproduct <- function(x) {
-    .Call(`_SpGPCW_rcpparma_outerproduct`, x)
-}
-
-rcpparma_innerproduct <- function(x) {
-    .Call(`_SpGPCW_rcpparma_innerproduct`, x)
-}
-
-rcpparma_bothproducts <- function(x) {
-    .Call(`_SpGPCW_rcpparma_bothproducts`, x)
-}
-
 rho_update <- function(rho_old, neighbors, eta, sigma2_eta_old, corr_inv, a_rho, b_rho, metrop_var_rho_trans, acctot_rho_trans) {
     .Call(`_SpGPCW_rho_update`, rho_old, neighbors, eta, sigma2_eta_old, corr_inv, a_rho, b_rho, metrop_var_rho_trans, acctot_rho_trans)
 }
