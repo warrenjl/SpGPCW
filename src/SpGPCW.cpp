@@ -298,7 +298,7 @@ for(int j = 1; j < mcmc_samples; ++j){
      Rcpp::checkUserInterrupt();
      }
   
-   if(((j + 1) % int(round(mcmc_samples*0.10)) == 0)){
+   if(((j + 1) % int(round(mcmc_samples*0.05)) == 0)){
      double completion = round(100*((j + 1)/(double)mcmc_samples));
      Rcpp::Rcout << "Progress: " << completion << "%" << std::endl;
      double accrate_phi_theta_trans = round(100*(acctot_phi_theta_trans/(double)j));
