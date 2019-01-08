@@ -68,12 +68,12 @@ if(beta_sigma2_theta_prior.isNotNull()){
   beta_sigma2_theta = Rcpp::as<double>(beta_sigma2_theta_prior);
   }
 
-double a_phi_theta = log(0.9999)/(-(z.n_cols - 1));  
+double a_phi_theta = log(0.999)/(-(z.n_cols - 1));  
 if(a_phi_theta_prior.isNotNull()){
   a_phi_theta = Rcpp::as<double>(a_phi_theta_prior);
   }
 
-double b_phi_theta = log(0.0001)/(-1);
+double b_phi_theta = log(0.001)/(-1);
 if(b_phi_theta_prior.isNotNull()){
   b_phi_theta = Rcpp::as<double>(b_phi_theta_prior);
   }
@@ -98,12 +98,12 @@ if(beta_sigma2_eta_prior.isNotNull()){
   beta_sigma2_eta = Rcpp::as<double>(beta_sigma2_eta_prior);
   }
 
-double a_phi_eta = log(0.9999)/(-(z.n_cols - 1));  
+double a_phi_eta = log(0.999)/(-(z.n_cols - 1));  
 if(a_phi_eta_prior.isNotNull()){
   a_phi_eta = Rcpp::as<double>(a_phi_eta_prior);
   }
   
-double b_phi_eta = log(0.0001)/(-1);
+double b_phi_eta = log(0.001)/(-1);
 if(b_phi_eta_prior.isNotNull()){
   b_phi_eta = Rcpp::as<double>(b_phi_eta_prior);
   }
