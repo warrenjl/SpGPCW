@@ -26,8 +26,8 @@ library(spdep)  #Creating a grid
 * Setting the global data values:
 ```{r}
 n<-5000  #Sample size
-m<-30  #Number of exposure time periods
-g<-5  #Size of square spatial grid
+m<-25  #Number of exposure time periods
+g<-4  #Size of square spatial grid
 s<-g^2  #Number of spatial locations
 
 grid<-cell2nb(nrow=g, 
@@ -60,18 +60,19 @@ x<-matrix(1,
           ncol=2)  #Covariate design matrix
 x[,2]<-rnorm(n)
 
-beta_true<- c(-0.30, 0.50)
-sigma2_theta_true<-0.75
-sigma2_eta_true<-0.20
-phi_true<-0.01
-Sigma_theta_true<-sigma2_theta_true*chol2inv(chol(temporal_corr_fun(m, phi_true)[[1]]))
-Sigma_eta_true<-sigma2_eta_true*chol2inv(chol(temporal_corr_fun(m, phi_true)[[1]]))
+beta_true<- c(-0.10, 0.20)
+sigma2_theta_true<-0.35
+phi_theta_true<-0.01
+sigma2_eta_true<-0.10
+phi_eta_true<-0.10
+Sigma_theta_true<-sigma2_theta_true*chol2inv(chol(temporal_corr_fun(m, phi_theta_true)[[1]]))
+Sigma_eta_true<-sigma2_eta_true*chol2inv(chol(temporal_corr_fun(m, phi_eta_true)[[1]]))
 theta_true<-rmnorm(n=1, 
                    mean=rep(0, times=m), 
                    varcov=Sigma_theta_true)
 theta_true<-theta_true - 
             mean(theta_true)
-rho_true<-0.85
+rho_true<-0.45
 eta_true<-rmnorm(n=1,
                  mean=rep(0, times=(m*s)),
                  varcov=chol2inv(chol(kronecker((rho_true*MCAR + (1 - rho_true)*diag(s)),
@@ -101,8 +102,9 @@ y<-rbinom(n=n,
 ```{r echo=TRUE}
 results<-SpGPCW(mcmc_samples = 10000,
                 y = y, x = x, z = z, site_id = site_id, neighbors = neighbors,
-                metrop_var_rho_trans = 1.00,
-                metrop_var_phi_trans = 0.07)
+                metrop_var_phi_theta_trans = 1.00,
+                metrop_var_rho_trans = 1.4,
+                metrop_var_phi_eta_trans = 0.15)
 ```
 
 [3]  Analyzing Output:
@@ -116,6 +118,7 @@ plot(results$beta[1, 1001:10000],
 abline(h=beta_true[1],
        col="red",
        lwd=2)  #True value
+
 plot(results$beta[2, 1001:10000], 
      type="l",
      ylab="beta1",
@@ -123,53 +126,21 @@ plot(results$beta[2, 1001:10000],
 abline(h=beta_true[2],
        col="red",
        lwd=2)  #True value
-plot(results$sigma2_theta[1001:10000],
-     type="l",
-     ylab="sigma2_theta",
-     xlab="Sample")
-abline(h=sigma2_theta_true,
-       col="red",
-       lwd=2)  #True value
-plot(results$sigma2_eta[1001:10000],
-     type="l",
-     ylab="sigma2_eta",
-     xlab="Sample")
-abline(h=sigma2_eta_true,
-       col="red",
-       lwd=2)  #True value
 
-par(mfrow=c(2,2))
-plot(results$rho[1001:10000],
-     type="l",
-     ylab="rho",
-     xlab="Sample")
-abline(h=rho_true, 
-       col="red",
-       lwd=2)  #True value
-plot(results$phi[1001:10000],
-     type="l",
-     ylab="phi",
-     xlab="Sample")
-abline(h=phi_true, 
-       col="red",
-       lwd=2)  #True value
+plot(rowMeans(results$theta[,1001:10000]),
+     theta_true)
+abline(0, 1)
+
 eta<-simplify2array(results$eta)
-plot(rowMeans(results$theta[,1001:10000] + 
-              eta[1,,1001:10000]), 
-     pch=16,
-     ylab="theta + eta1",
-     xlab="Time",
-     ylim=c(0.00, 2.00))
-points(theta_true + eta_true[1:m], 
-       pch=16, 
-       col="red")  #True values
-plot(rowMeans(results$theta[,1001:10000] + 
-              eta[8,,1001:10000]), 
-     pch=16,
-     ylab="theta + eta8",
-     xlab="Time",
-     ylim=c(-0.65, 1.00))
-points(theta_true + eta_true[(7*(m + 1)):(8*m)], 
-       pch=16, 
-       col="red")  #True values
+eta_post_means<-rep(0, times=(s*m))
+counter<-0
+for(j in 1:s){
+   for(k in 1:m){
+      counter<-counter + 1
+      eta_post_means[counter]<-mean(eta[j,k,1001:10000])
+      }
+    }
+plot(eta_post_means,
+     eta_true)
+abline(0, 1)
 ```
