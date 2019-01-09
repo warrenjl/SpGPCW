@@ -38,13 +38,16 @@ Rcpp::List SpGPCW(int mcmc_samples,
                   Rcpp::Nullable<int> rho_zero_indicator = R_NilValue){
 
 //Defining Parameters and Quantities of Interest
-arma::mat beta(x.n_cols, mcmc_samples); beta.fill(0.00);
-arma::mat theta(z.n_cols, mcmc_samples); theta.fill(0.00);
+int p_x = x.n_cols;
+int m = z.n_cols;
+int s = neighbors.n_cols;
+arma::mat beta(p_x, mcmc_samples); beta.fill(0.00);
+arma::mat theta(m, mcmc_samples); theta.fill(0.00);
 arma::vec sigma2_theta(mcmc_samples); sigma2_theta.fill(0.00);
 arma::vec phi_theta(mcmc_samples); phi_theta.fill(0.00);
 Rcpp::List eta(mcmc_samples);
 for(int j = 0; j < mcmc_samples; ++j){
-   arma::mat eta_temp(neighbors.n_cols, z.n_cols); eta_temp.fill(0.00);
+   arma::mat eta_temp(s, m); eta_temp.fill(0.00);
    eta[j] = eta_temp;
    }
 arma::vec rho(mcmc_samples); rho.fill(0.00);
@@ -68,12 +71,12 @@ if(beta_sigma2_theta_prior.isNotNull()){
   beta_sigma2_theta = Rcpp::as<double>(beta_sigma2_theta_prior);
   }
 
-double a_phi_theta = log(0.99)/(-(z.n_cols - 1));  
+double a_phi_theta = log(0.9999)/(-(m - 1));  
 if(a_phi_theta_prior.isNotNull()){
   a_phi_theta = Rcpp::as<double>(a_phi_theta_prior);
   }
 
-double b_phi_theta = log(0.01)/(-1);
+double b_phi_theta = log(0.0001)/(-1);
 if(b_phi_theta_prior.isNotNull()){
   b_phi_theta = Rcpp::as<double>(b_phi_theta_prior);
   }
@@ -98,12 +101,12 @@ if(beta_sigma2_eta_prior.isNotNull()){
   beta_sigma2_eta = Rcpp::as<double>(beta_sigma2_eta_prior);
   }
 
-double a_phi_eta = log(0.99)/(-(z.n_cols - 1));  
+double a_phi_eta = log(0.9999)/(-(m - 1));  
 if(a_phi_eta_prior.isNotNull()){
   a_phi_eta = Rcpp::as<double>(a_phi_eta_prior);
   }
   
-double b_phi_eta = log(0.01)/(-1);
+double b_phi_eta = log(0.0001)/(-1);
 if(b_phi_eta_prior.isNotNull()){
   b_phi_eta = Rcpp::as<double>(b_phi_eta_prior);
   }
@@ -129,7 +132,7 @@ if(phi_theta_init.isNotNull()){
   phi_theta(0) = Rcpp::as<double>(phi_theta_init);
   }
 
-arma::mat eta_temp(neighbors.n_cols, z.n_cols); eta_temp.fill(0.00);
+arma::mat eta_temp(s, m); eta_temp.fill(0.00);
 if(eta_init.isNotNull()){
   eta_temp = Rcpp::as<arma::mat>(eta_init);
   }
@@ -150,8 +153,8 @@ if(phi_eta_init.isNotNull()){
   phi_eta(0) = Rcpp::as<double>(phi_eta_init);
   }
 
-Rcpp::List temporal_corr_info_theta = temporal_corr_fun(z.n_cols, phi_theta(0));
-Rcpp::List temporal_corr_info_eta = temporal_corr_fun(z.n_cols, phi_eta(0));
+Rcpp::List temporal_corr_info_theta = temporal_corr_fun(m, phi_theta(0));
+Rcpp::List temporal_corr_info_eta = temporal_corr_fun(m, phi_eta(0));
 neg_two_loglike(0) = neg_two_loglike_update(y,
                                             x,
                                             z,

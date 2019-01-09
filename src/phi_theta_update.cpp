@@ -30,7 +30,7 @@ double second = -0.50*log_deter_theta_old -
 
 /*First*/
 double phi_theta_trans = R::rnorm(phi_theta_trans_old, 
-                            sqrt(metrop_var_phi_theta_trans));
+                                  sqrt(metrop_var_phi_theta_trans));
 double phi_theta = (b_phi_theta*exp(phi_theta_trans) + a_phi_theta)/(exp(phi_theta_trans) + 1.00);
 temporal_corr_info_theta = temporal_corr_fun(m, phi_theta);
 arma::mat corr_inv_theta = temporal_corr_info_theta[0];
