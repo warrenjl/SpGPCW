@@ -61,22 +61,20 @@ x<-matrix(1,
 x[,2]<-rnorm(n)
 
 beta_true<- c(-0.10, 0.20)
-sigma2_theta_true<-0.35
-phi_theta_true<-0.01
-sigma2_eta_true<-0.10
-phi_eta_true<-0.10
-Sigma_theta_true<-sigma2_theta_true*chol2inv(chol(temporal_corr_fun(m, phi_theta_true)[[1]]))
-Sigma_eta_true<-sigma2_eta_true*chol2inv(chol(temporal_corr_fun(m, phi_eta_true)[[1]]))
+sigma2_theta_true<-0.25
+sigma2_eta_true<-0.05
+phi_true<-0.20
+Sigma_true<-sigma2_theta_true*chol2inv(chol(temporal_corr_fun(m, phi_true)[[1]]))
 theta_true<-rmnorm(n=1, 
                    mean=rep(0, times=m), 
-                   varcov=Sigma_theta_true)
+                   varcov=Sigma_true)
 theta_true<-theta_true - 
             mean(theta_true)
 rho_true<-0.45
 eta_true<-rmnorm(n=1,
                  mean=rep(0, times=(m*s)),
                  varcov=chol2inv(chol(kronecker((rho_true*MCAR + (1 - rho_true)*diag(s)),
-                                                chol2inv(chol(Sigma_eta_true))))))
+                                                chol2inv(chol(Sigma_true))))))
 eta_true<-eta_true - 
           mean(eta_true)
 
@@ -102,9 +100,8 @@ y<-rbinom(n=n,
 ```{r echo=TRUE}
 results<-SpGPCW(mcmc_samples = 10000,
                 y = y, x = x, z = z, site_id = site_id, neighbors = neighbors,
-                metrop_var_phi_theta_trans = 1.00,
                 metrop_var_rho_trans = 1.4,
-                metrop_var_phi_eta_trans = 0.15)
+                metrop_var_phi_trans = 0.15)
 ```
 
 [3]  Analyzing Output:

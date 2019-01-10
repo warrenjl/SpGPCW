@@ -14,7 +14,7 @@ arma::vec theta_update(arma::mat x,
                        arma::vec beta,
                        arma::mat eta_old,
                        double sigma2_theta_old,
-                       arma::mat corr_inv_theta){
+                       arma::mat corr_inv){
 
 int m = z.n_cols;
 int n = w.size();
@@ -26,7 +26,7 @@ for(int j = 0; j < m; ++j){
 arma::mat z_trans = trans(z);
 
 arma::mat cov_theta = inv_sympd(z_trans*(w_mat%z) + 
-                                (1.00/sigma2_theta_old)*corr_inv_theta);
+                                (1.00/sigma2_theta_old)*corr_inv);
 
 arma::vec mean_temp(n); mean_temp.fill(0.00);
 int s = eta_old.n_rows;
