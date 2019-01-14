@@ -49,10 +49,10 @@ for(int j = 0; j < s; ++j){
    }
 
 //Centering for Stability (MCAR Style)
-for(int j = 0; j < m; ++ j){
-   eta.col(j) = eta.col(j) - 
-                mean(eta.col(j));
-   }
+//for(int j = 0; j < m; ++ j){
+//   eta.col(j) = eta.col(j) - 
+//                mean(eta.col(j));
+//   }
 
 return(eta);
 
