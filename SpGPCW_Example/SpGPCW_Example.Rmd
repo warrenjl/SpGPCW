@@ -53,6 +53,8 @@ for(j in 1:s){
    }
 for(j in 1:m){
    z[,j]<-(z[,j] - median(z[,j]))/IQR(z[,j])  #Data standardization (interquartile range)
+                                              #For simulation purposes only; you should not center 
+                                              #the exposures in practice.
    }
 
 x<-matrix(1, 
