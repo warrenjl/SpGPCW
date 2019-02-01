@@ -67,24 +67,23 @@ sigma2_theta_true<-0.25
 sigma2_eta_true<-0.05
 phi_true<-0.20
 Sigma_true<-sigma2_theta_true*chol2inv(chol(temporal_corr_fun(m, phi_true)[[1]]))
-theta_true<-rmnorm(n=1, 
-                   mean=rep(0, times=m), 
-                   varcov=Sigma_true)
-theta_true<-theta_true - 
-            mean(theta_true)
-rho_true<-0.45
-eta_true<-rmnorm(n=1,
-                 mean=rep(0, times=(m*s)),
-                 varcov=chol2inv(chol(kronecker((rho_true*MCAR + (1 - rho_true)*diag(s)),
-                                                chol2inv(chol(Sigma_true))))))
+eta_true<-rmnorm(n=1, 
+                 mean=rep(0, times=m), 
+                 varcov=Sigma_true)
 eta_true<-eta_true - 
           mean(eta_true)
+rho_true<-0.45
+theta_true<-rmnorm(n=1,
+                   mean=rep(eta_true, times=s),
+                   varcov=chol2inv(chol(kronecker((rho_true*MCAR + (1 - rho_true)*diag(s)),
+                                                  chol2inv(chol(Sigma_true))))))
+theta_true<-theta_true - 
+            mean(theta_true)
 
 logit_p_true<-rep(0, times=n)
 for(j in 1:s){
    logit_p_true[site_id == j]<-x[(site_id == j),]%*%beta_true + 
-                               z[(site_id == j),]%*%theta_true + 
-                               z[(site_id == j),]%*%eta_true[(1 + (j-1)*m):(j*m)]
+                               z[(site_id == j),]%*%theta_true[(1 + (j-1)*m):(j*m)]
    }
 probs_true<-inv.logit(logit_p_true)
 hist(probs_true)
@@ -126,20 +125,20 @@ abline(h=beta_true[2],
        col="red",
        lwd=2)  #True value
 
-plot(rowMeans(results$theta[,1001:10000]),
-     theta_true)
+plot(rowMeans(results$eta[,1001:10000]),
+     eta_true)
 abline(0, 1)
 
-eta<-simplify2array(results$eta)
-eta_post_means<-rep(0, times=(s*m))
+theta<-simplify2array(results$theta)
+theta_post_means<-rep(0, times=(s*m))
 counter<-0
 for(j in 1:s){
    for(k in 1:m){
       counter<-counter + 1
-      eta_post_means[counter]<-mean(eta[j,k,1001:10000])
+      theta_post_means[counter]<-mean(theta[j,k,1001:10000])
       }
     }
-plot(eta_post_means,
-     eta_true)
+plot(theta_post_means,
+     theta_true)
 abline(0, 1)
 ```

@@ -11,17 +11,15 @@ Rcpp::List w_update(arma::vec y,
                     arma::mat z,
                     arma::vec site_id,
                     arma::vec beta_old,
-                    arma::vec theta_old,
-                    arma::mat eta_old){
+                    arma::mat theta_old){
 
 int n = y.size();
-int s = eta_old.n_rows;
+int s = theta_old.n_rows;
 arma::vec mean_w(n); mean_w.fill(0.00);
 for(int j = 0; j < s; ++j){
    arma::uvec ids = find(site_id == (j + 1));
    mean_w.elem(ids) = x.rows(ids)*beta_old + 
-                      z.rows(ids)*theta_old +
-                      z.rows(ids)*trans(eta_old.row(j));
+                      z.rows(ids)*trans(theta_old.row(j));
    }
 
 arma::vec w = rcpp_pgdraw(1.00,

@@ -11,17 +11,15 @@ double neg_two_loglike_update(arma::vec y,
                               arma::mat z,
                               arma::vec site_id,
                               arma::vec beta,
-                              arma::vec theta,
-                              arma::mat eta){
+                              arma::mat theta){
 
 int n = y.size();
-int s = eta.n_rows;
+int s = theta.n_rows;
 arma::vec logit_probs(n); logit_probs.fill(0.00);
 for(int j = 0; j < s; ++j){
    arma::uvec ids = find(site_id == (j + 1));
    logit_probs.elem(ids) = x.rows(ids)*beta +
-                           z.rows(ids)*theta + 
-                           z.rows(ids)*trans(eta.row(j));
+                           z.rows(ids)*trans(theta.row(j));
    }
 arma::vec probs = exp(logit_probs)/(1 + exp(logit_probs));
 
