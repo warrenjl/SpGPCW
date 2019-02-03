@@ -17,8 +17,8 @@ neg_two_loglike_update <- function(y, x, z, site_id, beta, theta) {
     .Call(`_SpGPCW_neg_two_loglike_update`, y, x, z, site_id, beta, theta)
 }
 
-phi_update <- function(phi_old, MCAR, theta, sigma2_theta, rho, eta_old, sigma2_eta_old, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans) {
-    .Call(`_SpGPCW_phi_update`, phi_old, MCAR, theta, sigma2_theta, rho, eta_old, sigma2_eta_old, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans)
+phi_update <- function(phi_old, MCAR, theta, sigma2_theta, rho, eta, sigma2_eta, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans) {
+    .Call(`_SpGPCW_phi_update`, phi_old, MCAR, theta, sigma2_theta, rho, eta, sigma2_eta, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans)
 }
 
 rcpp_pgdraw <- function(b, c) {

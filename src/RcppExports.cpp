@@ -93,8 +93,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // phi_update
-Rcpp::List phi_update(double phi_old, arma::mat MCAR, arma::mat theta, double sigma2_theta, double rho, arma::vec eta_old, double sigma2_eta_old, Rcpp::List temporal_corr_info, double a_phi, double b_phi, double metrop_var_phi_trans, int acctot_phi_trans);
-RcppExport SEXP _SpGPCW_phi_update(SEXP phi_oldSEXP, SEXP MCARSEXP, SEXP thetaSEXP, SEXP sigma2_thetaSEXP, SEXP rhoSEXP, SEXP eta_oldSEXP, SEXP sigma2_eta_oldSEXP, SEXP temporal_corr_infoSEXP, SEXP a_phiSEXP, SEXP b_phiSEXP, SEXP metrop_var_phi_transSEXP, SEXP acctot_phi_transSEXP) {
+Rcpp::List phi_update(double phi_old, arma::mat MCAR, arma::mat theta, double sigma2_theta, double rho, arma::vec eta, double sigma2_eta, Rcpp::List temporal_corr_info, double a_phi, double b_phi, double metrop_var_phi_trans, int acctot_phi_trans);
+RcppExport SEXP _SpGPCW_phi_update(SEXP phi_oldSEXP, SEXP MCARSEXP, SEXP thetaSEXP, SEXP sigma2_thetaSEXP, SEXP rhoSEXP, SEXP etaSEXP, SEXP sigma2_etaSEXP, SEXP temporal_corr_infoSEXP, SEXP a_phiSEXP, SEXP b_phiSEXP, SEXP metrop_var_phi_transSEXP, SEXP acctot_phi_transSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -103,14 +103,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type theta(thetaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2_theta(sigma2_thetaSEXP);
     Rcpp::traits::input_parameter< double >::type rho(rhoSEXP);
-    Rcpp::traits::input_parameter< arma::vec >::type eta_old(eta_oldSEXP);
-    Rcpp::traits::input_parameter< double >::type sigma2_eta_old(sigma2_eta_oldSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type eta(etaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2_eta(sigma2_etaSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type temporal_corr_info(temporal_corr_infoSEXP);
     Rcpp::traits::input_parameter< double >::type a_phi(a_phiSEXP);
     Rcpp::traits::input_parameter< double >::type b_phi(b_phiSEXP);
     Rcpp::traits::input_parameter< double >::type metrop_var_phi_trans(metrop_var_phi_transSEXP);
     Rcpp::traits::input_parameter< int >::type acctot_phi_trans(acctot_phi_transSEXP);
-    rcpp_result_gen = Rcpp::wrap(phi_update(phi_old, MCAR, theta, sigma2_theta, rho, eta_old, sigma2_eta_old, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans));
+    rcpp_result_gen = Rcpp::wrap(phi_update(phi_old, MCAR, theta, sigma2_theta, rho, eta, sigma2_eta, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans));
     return rcpp_result_gen;
 END_RCPP
 }

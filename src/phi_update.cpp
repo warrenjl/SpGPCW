@@ -11,8 +11,8 @@ Rcpp::List phi_update(double phi_old,
                       arma::mat theta,
                       double sigma2_theta,
                       double rho,
-                      arma::vec eta_old,
-                      double sigma2_eta_old,
+                      arma::vec eta,
+                      double sigma2_eta,
                       Rcpp::List temporal_corr_info,
                       double a_phi,
                       double b_phi,
@@ -20,12 +20,12 @@ Rcpp::List phi_update(double phi_old,
                       int acctot_phi_trans){
   
 int s = theta.n_rows;
-int m = eta_old.size();
+int m = eta.size();
 arma::vec theta_full(s*m); theta_full.fill(0.00);
 arma::vec eta_full(s*m); eta_full.fill(0.00);
 for(int j = 0; j < s; ++j){
    theta_full.subvec(m*j, ((j + 1)*m - 1)) = trans(theta.row(j));
-   eta_full.subvec(m*j, ((j + 1)*m - 1)) = eta_old;
+   eta_full.subvec(m*j, ((j + 1)*m - 1)) = eta;
    }
 
 /*Second*/
@@ -35,7 +35,7 @@ double log_deter_old = temporal_corr_info_old[1];
 double phi_trans_old = log((phi_old - a_phi)/(b_phi - phi_old));
 
 double second = -0.50*(1 + s)*log_deter_old - 
-                (1.00/sigma2_eta_old)*0.50*dot(eta_old, (corr_inv_old*eta_old)) -
+                (1.00/sigma2_eta)*0.50*dot(eta, (corr_inv_old*eta)) -
                 (1.00/sigma2_theta)*0.50*dot((theta_full - eta_full), kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv_old)*(theta_full - eta_full)) + 
                 phi_trans_old -
                 2.00*log(1.00 + exp(phi_trans_old));
@@ -49,7 +49,7 @@ arma::mat corr_inv = temporal_corr_info[0];
 double log_deter = temporal_corr_info[1];
 
 double first = -0.50*(1 + s)*log_deter - 
-               (1.00/sigma2_eta_old)*0.50*dot(eta_old, (corr_inv*eta_old)) -
+               (1.00/sigma2_eta)*0.50*dot(eta, (corr_inv*eta)) -
                (1.00/sigma2_theta)*0.50*dot((theta_full - eta_full), kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv)*(theta_full - eta_full)) +
                phi_trans -
                2.00*log(1.00 + exp(phi_trans));

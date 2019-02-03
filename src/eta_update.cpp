@@ -30,7 +30,7 @@ arma::vec mean_eta = cov_eta*(z_star_trans*(((kron((rho*MCAR + (1.00 - rho)*eye(
 
 arma::mat ind_norms = arma::randn(1, m);
 arma::vec eta = mean_eta + 
-                  trans(ind_norms*arma::chol(cov_eta));
+                trans(ind_norms*arma::chol(cov_eta));
 
 return(eta);
 

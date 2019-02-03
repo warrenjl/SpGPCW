@@ -45,7 +45,7 @@ for(int j = 0; j < mcmc_samples; ++j){
    }
 arma::vec sigma2_theta(mcmc_samples); sigma2_theta.fill(0.00);
 arma::vec rho(mcmc_samples); rho.fill(0.00);
-arma::mat eta(m, mcmc_samples); theta.fill(0.00);
+arma::mat eta(m, mcmc_samples); eta.fill(0.00);
 arma::vec sigma2_eta(mcmc_samples); sigma2_eta.fill(0.00);
 arma::vec phi(mcmc_samples); phi.fill(0.00);
 arma::vec neg_two_loglike(mcmc_samples); neg_two_loglike.fill(0.00);
@@ -54,9 +54,9 @@ arma::vec neg_two_loglike(mcmc_samples); neg_two_loglike.fill(0.00);
 arma::vec diag_neighbors(s); diag_neighbors.fill(0.00);
 arma::mat z_star((s*m), m);
 for(int j = 0; j < s; ++j){
-  diag_neighbors(j) = sum(neighbors.row(j));
-  z_star.submat(m*j, 0, ((j + 1)* m - 1), (m-1)) = eye(m, m);
-  }
+   diag_neighbors(j) = sum(neighbors.row(j));
+   z_star.submat(m*j, 0, ((j + 1)*m - 1), (m-1)) = eye(m, m);
+   }
 arma::mat MCAR = diagmat(diag_neighbors) - 
                  neighbors;
 
