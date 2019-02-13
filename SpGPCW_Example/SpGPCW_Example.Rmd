@@ -7,7 +7,7 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-# SpGPCW: Spatially Varying Gaussian Process Modeling for Critical Window Estimation
+# SpGPCW: Spatially Varying Gaussian Process Model for Critical Window Estimation
 
 ## SpGPCW_Example
 
@@ -52,9 +52,7 @@ for(j in 1:s){
                               byrow=TRUE)  #Exposure design matrices
    }
 for(j in 1:m){
-   z[,j]<-(z[,j] - median(z[,j]))/IQR(z[,j])  #Data standardization (interquartile range)
-                                              #For simulation purposes only; you should not center 
-                                              #the exposures in practice.
+   z[,j]<-z[,j]/IQR(z[,j])  #Data standardization (interquartile range)
    }
 
 x<-matrix(1, 
@@ -77,8 +75,11 @@ theta_true<-rmnorm(n=1,
                    mean=rep(eta_true, times=s),
                    varcov=chol2inv(chol(kronecker((rho_true*MCAR + (1 - rho_true)*diag(s)),
                                                   chol2inv(chol(Sigma_true))))))
-theta_true<-theta_true - 
-            mean(theta_true)
+
+for(j in 1:s){
+   theta_true[(1 + (j-1)*m):(m*j)]<-theta_true[(1 + (j-1)*m):(m*j)] - 
+                                    mean(theta_true[(1 + (j-1)*m):(m*j)])
+   }
 
 logit_p_true<-rep(0, times=n)
 for(j in 1:s){
