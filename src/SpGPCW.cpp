@@ -1,5 +1,4 @@
 #include "RcppArmadillo.h"
-#include "RcppArmadillo.h"
 #include "SpGPCW.h"
 using namespace arma;
 using namespace Rcpp;
