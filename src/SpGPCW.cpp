@@ -164,7 +164,7 @@ int acctot_phi_trans = 0;
 
 //Main Sampling Loop
 for(int j = 1; j < mcmc_samples; ++j){
-  
+
    //w Update
    Rcpp::List w_output = w_update(y,
                                   x,
@@ -222,7 +222,7 @@ for(int j = 1; j < mcmc_samples; ++j){
                                         metrop_var_rho_trans,
                                         acctot_rho_trans);
    
-     rho(j) = rho_output[0];
+     rho(j) = Rcpp::as<double>(rho_output[0]);
      acctot_rho_trans = rho_output[1];
      }
    
@@ -256,7 +256,7 @@ for(int j = 1; j < mcmc_samples; ++j){
                                       metrop_var_phi_trans,
                                       acctot_phi_trans);
    
-   phi(j) = phi_output[0];
+   phi(j) = Rcpp::as<double>(phi_output[0]);
    acctot_phi_trans = phi_output[1];
    temporal_corr_info = phi_output[2];
 
