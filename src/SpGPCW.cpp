@@ -95,12 +95,12 @@ if(beta_sigma2_eta_prior.isNotNull()){
   beta_sigma2_eta = Rcpp::as<double>(beta_sigma2_eta_prior);
   }
 
-double a_phi = log(0.9999)/(-(m - 1));  
+double a_phi = log(0.9999)/(-(m - 1.00));  
 if(a_phi_prior.isNotNull()){
   a_phi = Rcpp::as<double>(a_phi_prior);
   }
 
-double b_phi = log(0.0001)/(-1);
+double b_phi = log(0.0001)/(-1.00);
 if(b_phi_prior.isNotNull()){
   b_phi = Rcpp::as<double>(b_phi_prior);
   }
