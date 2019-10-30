@@ -39,7 +39,7 @@ double second = -0.50*(1 + s)*log_deter_old -
                 (1.00/sigma2_theta)*0.50*dot((theta_full - eta_full), kron((rho*MCAR + (1.00 - rho)*eye(s, s)), corr_inv_old)*(theta_full - eta_full)) + 
                 phi_trans_old -
                 2.00*log(1.00 + exp(phi_trans_old));
-
+                
 /*First*/
 double phi_trans = R::rnorm(phi_trans_old, 
                             sqrt(metrop_var_phi_trans));
