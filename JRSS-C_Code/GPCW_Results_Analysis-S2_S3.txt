@@ -1,0 +1,149 @@
+#############################################
+#Burnin Amount (Number of Samples to Discard)
+#############################################
+burnin<-5000
+thin<-5
+samples<-30000
+keep_set<-seq((burnin + 1), 
+              samples, 
+              thin)
+#################################################################################################
+#Summary Metrics
+#################################################################################################
+mse<-rep(0, 
+         times = sim_count)
+ec<-rep(0, 
+        times = sim_count)
+sens<-rep(0, 
+          times = sim_count)
+spec<-rep(0, 
+          times = sim_count)
+waic<-rep(0, 
+          times = sim_count)
+pwaic<-rep(0, 
+           times = sim_count)
+deviance_cc<-rep(0, 
+                 times = sim_count)
+for(j in 1:sim_count){
+  
+   #Average Mean Squared Error
+   mse_temp<-matrix(0, 
+                    nrow = s, 
+                    ncol = m)
+   for(k in 1:s){
+
+      theta_est<-rowMeans(results_GPCW[[j]]$theta[,keep_set])
+      mse_temp[k,]<-(theta_true[[j]][[k]] - theta_est)^2
+
+      }
+   mse[j]<-mean(mse_temp)
+
+   #Average Empirical Coverage
+   ec_temp<-matrix(0, 
+                   nrow = s, 
+                   ncol = m)
+   for(k in 1:s){
+
+      for(l in 1:m){
+
+         theta_cr<-quantile(results_GPCW[[j]]$theta[l, keep_set], 
+                            c(0.025, 0.975))
+         if((theta_true[[j]][[k]][l] >= theta_cr[1]) & (theta_true[[j]][[k]][l] <= theta_cr[2])){
+           ec_temp[k,l]<-1
+           }
+
+         }
+
+      }
+   ec[j]<-mean(ec_temp)
+   
+   #Sensitiviy and Specificity
+   sens_temp<-rep(0, 
+                  times = s)
+   spec_temp<-rep(0, 
+                  times = s)
+   for(k in 1:s){
+
+      true_cws<-as.numeric(theta_true[[j]][[k]] != 0)
+      est_cws<-rep(0,  
+                   times = m)
+      for(l in 1:m){
+
+         theta_cr<-quantile(results_GPCW[[j]]$theta[k, keep_set], 
+                            c(0.025, 0.975))
+         if((0 >= theta_cr[2]) | (0 <= theta_cr[1])){
+           est_cws[l]<-1
+           }
+
+         }
+
+      sens_temp[k]<-sum((true_cws == est_cws) & (true_cws == 1))/sum(true_cws == 1)
+      spec_temp[k]<-sum((true_cws == est_cws) & (true_cws == 0))/sum(true_cws == 0)
+   
+      }
+   sens[j]<-mean(sens_temp)
+   spec[j]<-mean(spec_temp)
+   
+   #WAIC, pWAIC, and Deviance_cc
+   piece<-matrix(0, 
+                 nrow = length(keep_set), 
+                 ncol = n)
+   y_new<-matrix(0,
+                 nrow = length(keep_set),
+                 ncol = n)
+   deviance_cc_temp<-rep(0, 
+                         times = length(keep_set))
+   for(k in 1:length(keep_set)){
+
+      logit<-(x*results_GPCW[[j]]$beta[keep_set[k]] + 
+              z_sim[[j]]%*%results_GPCW[[j]]$theta[,keep_set[k]])
+      probs<-exp(logit)/(1 + exp(logit)) 
+      piece[k,]<-dbinom(y_sim[[j]], 
+                        size = 1, 
+                        prob = probs, 
+                        log = TRUE)
+
+      y_new[k,]<-rbinom(n = length(probs),
+                        size = 1,
+                        prob=probs)
+      deviance_cc_temp[k]<-2*sum((y_sim[[j]] + 0.5)*log((y_sim[[j]] + 0.5)/(y_new[k,] + 0.5)) + 
+                                 (1.5 - y_sim[[j]])*log((1.5 - y_sim[[j]])/(1.5 - y_new[j,])))
+     
+      }
+
+   llpd<-sum(log(colMeans(exp(piece))))
+
+   temp<-rep(0, 
+             times = n)
+   for(k in 1:n){
+      temp[k]<-var(piece[,k])
+      }
+   PWAIC_2<-sum(temp)
+   WAIC_2<- -2*(llpd - PWAIC_2)
+   
+   waic[j]<-WAIC_2
+   pwaic[j]<-PWAIC_2
+
+   deviance_cc[j]<-mean(deviance_cc_temp)
+
+   #Completion
+   print(j/sim_count)
+
+   }
+   
+round(c(mean(mse*10000), sd(mse*10000)/sqrt(sim_count)), 
+      2)
+round(c(mean(ec), sd(ec)/sqrt(sim_count)), 
+      2)
+round(c(mean(sens, na.rm = TRUE), sd(sens, na.rm = TRUE)/sqrt(sim_count)), 
+      2)
+round(c(mean(spec, na.rm = TRUE), sd(spec, na.rm = TRUE)/sqrt(sim_count)), 
+      2)
+round(c(mean(waic), sd(waic)/sqrt(sim_count)), 
+      2)
+round(c(mean(pwaic), sd(pwaic)/sqrt(sim_count)), 
+      2)
+round(c(mean(deviance_cc), sd(deviance_cc)/sqrt(sim_count)), 
+      2)
+
+  

@@ -1,0 +1,9 @@
+set.seed(5722)
+
+library(GPCW)
+results_GPCW<-list(0)
+for(j in 1:sim_count){
+   results_GPCW[[j]]<-GPCW(mcmc_samples = 30000,
+                           y = y_sim[[j]], x = x, z = z_sim[[j]],
+                           metrop_var_phi_trans = 1.15)
+   }

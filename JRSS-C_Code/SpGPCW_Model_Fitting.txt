@@ -1,0 +1,12 @@
+set.seed(3110)
+
+library(SpGPCW)
+results_SpGPCW<-list(0)
+for(j in 1:sim_count){
+   results_SpGPCW[[j]]<-SpGPCW(mcmc_samples = 30000,
+                               y = y_sim[[j]], x = x, z = z_sim[[j]], 
+                               site_id = site_id, neighbors = neighbors,
+                               metrop_var_rho_trans = 0.60,
+                               metrop_var_phi_trans = 0.10)
+   }
+

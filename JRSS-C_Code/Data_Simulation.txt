@@ -60,8 +60,9 @@ sim_count<-100
 z_sim<-list(0)
 y_sim<-list(0)
 
-#phi_true<-mean(results_SpGPCW$phi[keep_set])
-phi_true<-0.69  #Reviewer Suggested Value
+phi_true<-mean(results_SpGPCW$phi[keep_set])
+#phi_true<-0.29  #In-between the Two Extremes 
+#phi_true<-0.69  #Reviewer Suggested Value
 rho_true<-mean(results_SpGPCW$rho[keep_set])
 sigma2_eta_true<-mean(results_SpGPCW$sigma2_eta[keep_set])
 sigma2_theta_true<-mean(results_SpGPCW$sigma2_theta[keep_set])
@@ -73,10 +74,10 @@ MCAR<-diag(rowSums(neighbors)) -
 #Choosing the Simulation Setting of Interest
 #######################################################################
 #Setting 1:  Single set of risk parameters
-#Setting 2:  Spatially-varying risk parameters (no spatial correlation)
-#Setting 3:  Spatially-varying risk parameters (spatial correlation)
+#Setting 2:  Spatially-varying risk parameters (spatial correlation)
+#Setting 3:  Spatially-varying risk parameters (no spatial correlation)
 
-sim_setting<-3
+sim_setting<-1
 
 ###################################################################################
 #Setting 1
@@ -87,9 +88,8 @@ if(sim_setting == 1){
 
   eta_true<-list(0)
   
-  #beta_true<- -1.10
-  beta_true<- -3.20  #\phi = 0.69 
-
+  beta_true<- -1.10
+  
   for(sim_counter in 1:sim_count){
 
      eta_true[[sim_counter]]<-rmnorm(n=1,
@@ -119,74 +119,18 @@ if(sim_setting == 1){
 
   }
 
-#################################################################################################################
+##################################################################################################################################################
 #Setting 2
-#################################################################################################################
+##################################################################################################################################################
 if(sim_setting == 2){
-
-  set.seed(1146)
-
-  theta_true<-list(0)
-  
-  #beta_true<- -1.10 
-  beta_true<- -3.20  #\phi = 0.69 
-
-  for(sim_counter in 1:sim_count){
-     
-     theta_true[[sim_counter]]<-list(0)
-
-     eta_true<-rmnorm(n=1,
-                      mean=rep(0, times=m),
-                      varcov=(sigma2_eta_true*temp_corr))
-     eta_true<-eta_true - 
-               mean(eta_true)
-
-     theta_temp<-rmnorm(n=1,
-                        mean=rep(eta_true, times=s),
-                        varcov=(sigma2_theta_true*chol2inv(chol(kronecker(diag(s), chol2inv(chol(temp_corr)))))))
-
-     for(j in 1:s){
-        theta_true[[sim_counter]][[j]]<-theta_temp[(1 + (j-1)*m):(j*m)]
-        theta_true[[sim_counter]][[j]]<-theta_true[[sim_counter]][[j]] - 
-                                        mean(theta_true[[sim_counter]][[j]])
-        theta_true[[sim_counter]][[j]][abs(theta_true[[sim_counter]][[j]]) < 0.04]<-0  #Thresholding
-        }
-
-     z<-z_raw_week[sample(c(1:nrow(z_raw_week)), size=n, replace=FALSE), c(1:m)]
-     for(j in 1:m){
-        z[,j]<-z[,j]/IQR(z[,j], na.rm=TRUE)
-        }
-     z[is.na(z) == 1]<-0
-     z_sim[[sim_counter]]<-z
-
-     logit_p_sim<-rep(0, times=n)
-     for(j in 1:s){
-        logit_p_sim[site_id == j]<-x[site_id == j,]*beta_true + 
-                                   z[site_id == j,]%*%theta_true[[sim_counter]][[j]]
-        }
-
-     p_sim<-exp(logit_p_sim)/(1 + exp(logit_p_sim))
-
-     y_sim[[sim_counter]]<-rbinom(n=n, 
-                                  size=1, 
-                                  prob=p_sim)
-   
-     print(sim_counter/sim_count)
-     }
-
-  }
-
-##################################################################################################################################################
-#Setting 3
-##################################################################################################################################################
-if(sim_setting == 3){
 
   set.seed(8753)
 
   theta_true<-list(0)
   
-  #beta_true<- -1.10 
-  beta_true<- -3.20  #\phi = 0.69 
+  beta_true<- -1.10
+  #beta_true<- -4.20  #\phi = 0.29 
+  #beta_true<- -3.20  #\phi = 0.69 
 
   for(sim_counter in 1:sim_count){
      
@@ -233,3 +177,58 @@ if(sim_setting == 3){
 
   }
 
+#################################################################################################################
+#Setting 3
+#################################################################################################################
+if(sim_setting == 3){
+
+  set.seed(1146)
+
+  theta_true<-list(0)
+  
+  beta_true<- -1.10 
+  
+  for(sim_counter in 1:sim_count){
+     
+     theta_true[[sim_counter]]<-list(0)
+
+     eta_true<-rmnorm(n=1,
+                      mean=rep(0, times=m),
+                      varcov=(sigma2_eta_true*temp_corr))
+     eta_true<-eta_true - 
+               mean(eta_true)
+
+     theta_temp<-rmnorm(n=1,
+                        mean=rep(eta_true, times=s),
+                        varcov=(sigma2_theta_true*chol2inv(chol(kronecker(diag(s), chol2inv(chol(temp_corr)))))))
+
+     for(j in 1:s){
+        theta_true[[sim_counter]][[j]]<-theta_temp[(1 + (j-1)*m):(j*m)]
+        theta_true[[sim_counter]][[j]]<-theta_true[[sim_counter]][[j]] - 
+                                        mean(theta_true[[sim_counter]][[j]])
+        theta_true[[sim_counter]][[j]][abs(theta_true[[sim_counter]][[j]]) < 0.04]<-0  #Thresholding
+        }
+
+     z<-z_raw_week[sample(c(1:nrow(z_raw_week)), size=n, replace=FALSE), c(1:m)]
+     for(j in 1:m){
+        z[,j]<-z[,j]/IQR(z[,j], na.rm=TRUE)
+        }
+     z[is.na(z) == 1]<-0
+     z_sim[[sim_counter]]<-z
+
+     logit_p_sim<-rep(0, times=n)
+     for(j in 1:s){
+        logit_p_sim[site_id == j]<-x[site_id == j,]*beta_true + 
+                                   z[site_id == j,]%*%theta_true[[sim_counter]][[j]]
+        }
+
+     p_sim<-exp(logit_p_sim)/(1 + exp(logit_p_sim))
+
+     y_sim[[sim_counter]]<-rbinom(n=n, 
+                                  size=1, 
+                                  prob=p_sim)
+   
+     print(sim_counter/sim_count)
+     }
+
+  }
