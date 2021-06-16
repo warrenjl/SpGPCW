@@ -8,31 +8,27 @@ library(mnormt)
 ###############
 set.seed(19765)
 
-#########################################################################################################################################
+##################################################
 #Loading SpGCW PM2.5 Workspace
-#########################################################################################################################################
-load("C:\\Users\\jlw98\\Desktop\\Yale Research\\Howard Chang\\Spatial_Critical_Windows\\LBW-RDC_CSA-2005_2008\\Scaling\\pm-SpGPCW.RData")
-
-#########################
-#Final Inference Set
-#########################
-burnin<-150000
-thin<-10
-samples<-250000
-keep_set<-seq((burnin+1), 
-              samples, 
-              thin)
+##################################################
+load("C:\\Users\\jlw98\\Desktop\\pm-SpGPCW.RData")
 
 ##########################################
 #Temporal Correlation Function
 ##########################################
-corr_fun<-function(phi_val){                
-          times<-c(1:m)  
-          rho<-exp(-phi_val) 
-          H<-abs(outer(times, times, "-"))
-          K<-rho^H      
-          return(K)
-          }
+corr_fun<-function(phi_val){                
+
+          times<-c(1:m)  
+
+          rho<-exp(-phi_val) 
+
+          H<-abs(outer(times, times, "-"))
+
+          K<-rho^H      
+
+          return(K)
+
+          }
 
 ##############################################################
 #Global Settings
@@ -60,12 +56,12 @@ sim_count<-100
 z_sim<-list(0)
 y_sim<-list(0)
 
-phi_true<-mean(results_SpGPCW$phi[keep_set])
+phi_true<-0.0001955731  #Posterior Mean
 #phi_true<-0.29  #In-between the Two Extremes 
 #phi_true<-0.69  #Reviewer Suggested Value
-rho_true<-mean(results_SpGPCW$rho[keep_set])
-sigma2_eta_true<-mean(results_SpGPCW$sigma2_eta[keep_set])
-sigma2_theta_true<-mean(results_SpGPCW$sigma2_theta[keep_set])
+rho_true<-0.7691962  #Posterior Mean
+sigma2_eta_true<-0.7049762  #Posterior Mean
+sigma2_theta_true<-0.2485532  #Posterior Mean
 temp_corr<-corr_fun(phi_true)
 MCAR<-diag(rowSums(neighbors)) - 
       neighbors
@@ -232,3 +228,4 @@ if(sim_setting == 3){
      }
 
   }
+  
