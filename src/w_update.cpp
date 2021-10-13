@@ -22,7 +22,8 @@ for(int j = 0; j < s; ++j){
                       z.rows(ids)*trans(theta_old.row(j));
    }
 
-arma::vec w = rcpp_pgdraw(1.00,
+arma::vec input(1); input.fill(1.00);
+arma::vec w = rcpp_pgdraw(input,
                           mean_w);
 
 arma::vec gamma = (y - 0.50)/w;

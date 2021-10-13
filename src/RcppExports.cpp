@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // SpGPCW
 Rcpp::List SpGPCW(int mcmc_samples, arma::vec y, arma::mat x, arma::mat z, arma::vec site_id, arma::mat neighbors, double metrop_var_rho_trans, double metrop_var_phi_trans, Rcpp::Nullable<double> sigma2_beta_prior, Rcpp::Nullable<double> alpha_sigma2_theta_prior, Rcpp::Nullable<double> beta_sigma2_theta_prior, Rcpp::Nullable<double> a_rho_prior, Rcpp::Nullable<double> b_rho_prior, Rcpp::Nullable<double> alpha_sigma2_eta_prior, Rcpp::Nullable<double> beta_sigma2_eta_prior, Rcpp::Nullable<double> a_phi_prior, Rcpp::Nullable<double> b_phi_prior, Rcpp::Nullable<Rcpp::NumericVector> beta_init, Rcpp::Nullable<Rcpp::NumericMatrix> theta_init, Rcpp::Nullable<double> sigma2_theta_init, Rcpp::Nullable<double> rho_init, Rcpp::Nullable<Rcpp::NumericVector> eta_init, Rcpp::Nullable<double> sigma2_eta_init, Rcpp::Nullable<double> phi_init, Rcpp::Nullable<int> rho_zero_indicator);
 RcppExport SEXP _SpGPCW_SpGPCW(SEXP mcmc_samplesSEXP, SEXP ySEXP, SEXP xSEXP, SEXP zSEXP, SEXP site_idSEXP, SEXP neighborsSEXP, SEXP metrop_var_rho_transSEXP, SEXP metrop_var_phi_transSEXP, SEXP sigma2_beta_priorSEXP, SEXP alpha_sigma2_theta_priorSEXP, SEXP beta_sigma2_theta_priorSEXP, SEXP a_rho_priorSEXP, SEXP b_rho_priorSEXP, SEXP alpha_sigma2_eta_priorSEXP, SEXP beta_sigma2_eta_priorSEXP, SEXP a_phi_priorSEXP, SEXP b_phi_priorSEXP, SEXP beta_initSEXP, SEXP theta_initSEXP, SEXP sigma2_theta_initSEXP, SEXP rho_initSEXP, SEXP eta_initSEXP, SEXP sigma2_eta_initSEXP, SEXP phi_initSEXP, SEXP rho_zero_indicatorSEXP) {
@@ -115,12 +120,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // rcpp_pgdraw
-arma::vec rcpp_pgdraw(double b, arma::vec c);
+arma::vec rcpp_pgdraw(arma::vec b, arma::vec c);
 RcppExport SEXP _SpGPCW_rcpp_pgdraw(SEXP bSEXP, SEXP cSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type b(bSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type c(cSEXP);
     rcpp_result_gen = Rcpp::wrap(rcpp_pgdraw(b, c));
     return rcpp_result_gen;
