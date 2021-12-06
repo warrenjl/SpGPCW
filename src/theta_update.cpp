@@ -10,6 +10,7 @@ arma::mat theta_update(arma::mat theta_old,
                        arma::mat x, 
                        arma::mat z,
                        arma::vec site_id,
+                       arma::vec off_set,
                        arma::mat neighbors,
                        arma::vec w,
                        arma::vec gamma,
@@ -31,6 +32,7 @@ arma::mat z_trans = trans(z);
 arma::mat theta = theta_old;
 arma::vec mean_theta_temp(m); mean_theta_temp.fill(0.00);
 for(int j = 0; j < s; ++j){
+   
    mean_theta_temp.fill(0.00);
    for(int k = 0; k < s; ++k){
       mean_theta_temp = mean_theta_temp +
@@ -41,7 +43,7 @@ for(int j = 0; j < s; ++j){
    arma::mat cov_theta = inv_sympd(z_trans.cols(ids)*(w_mat.rows(ids)%z.rows(ids)) +
                                    ((rho_old*sum(neighbors.row(j)) + 1.00 - rho_old)/sigma2_theta_old)*corr_inv);
    
-   arma::vec mean_theta = cov_theta*(z_trans.cols(ids)*(w.elem(ids)%(gamma.elem(ids) - x.rows(ids)*beta)) +
+   arma::vec mean_theta = cov_theta*(z_trans.cols(ids)*(w.elem(ids)%(gamma.elem(ids) - off_set.elem(ids) - x.rows(ids)*beta)) +
                                      (corr_inv/sigma2_theta_old)*(rho_old*mean_theta_temp + (1.00 - rho_old)*eta_old));
   
    arma::mat ind_norms = arma::randn(1, m);

@@ -19,8 +19,10 @@ int m = theta.n_cols;
 arma::vec theta_full(s*m); theta_full.fill(0.00);
 arma::vec eta_full(s*m); eta_full.fill(0.00);
 for(int j = 0; j < s; ++j){
+   
    theta_full.subvec(m*j, ((j + 1)*m - 1)) = trans(theta.row(j));
    eta_full.subvec(m*j, ((j + 1)*m - 1)) = eta_old;
+   
    }              
   
 double alpha_sigma2_theta_update = 0.50*(s*m) + 

@@ -22,8 +22,10 @@ int m = theta.n_cols;
 arma::vec theta_full(s*m); theta_full.fill(0.00);
 arma::vec eta_full(s*m); eta_full.fill(0.00);
 for(int j = 0; j < s; ++j){
+  
    theta_full.subvec(m*j, ((j + 1)*m - 1)) = trans(theta.row(j));
    eta_full.subvec(m*j, ((j + 1)*m - 1)) = eta_old;
+   
    }
 
 /*Second*/
@@ -54,8 +56,10 @@ double first = 0.50*m*MCAR_info -
 double ratio = exp(first - second);   
 double acc = 1;
 if(ratio < R::runif(0.00, 1.00)){
+  
   rho = rho_old;
   acc = 0;
+  
   }
 acctot_rho_trans = acctot_rho_trans + 
                    acc;

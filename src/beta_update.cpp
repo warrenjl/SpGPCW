@@ -9,6 +9,7 @@ using namespace Rcpp;
 arma::vec beta_update(arma::mat x, 
                       arma::mat z,
                       arma::vec site_id,
+                      arma::vec off_set,
                       arma::vec w,
                       arma::vec gamma,
                       arma::mat theta_old,
@@ -29,8 +30,11 @@ arma::mat cov_beta = inv_sympd(x_trans*(w_mat%x) +
 arma::vec mean_temp(n); mean_temp.fill(0.00);
 int s = theta_old.n_rows;
 for(int j = 0; j < s; ++j){
+   
    arma::uvec ids = find(site_id == (j + 1));
-   mean_temp.elem(ids) = z.rows(ids)*trans(theta_old.row(j));
+   mean_temp.elem(ids) = off_set.elem(ids) +
+                         z.rows(ids)*trans(theta_old.row(j));
+   
    }
 
 arma::vec mean_beta = cov_beta*(x_trans*(w%(gamma - mean_temp)));

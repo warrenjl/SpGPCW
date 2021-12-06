@@ -103,7 +103,8 @@ y<-rbinom(n=n,
 results<-SpGPCW(mcmc_samples = 10000,
                 y = y, x = x, z = z, site_id = site_id, neighbors = neighbors,
                 metrop_var_rho_trans = 1.4,
-                metrop_var_phi_trans = 0.15)
+                metrop_var_phi_trans = 0.15,
+                likelihood_indicator = 0)
 ```
 
 [3]  Analyzing Output:

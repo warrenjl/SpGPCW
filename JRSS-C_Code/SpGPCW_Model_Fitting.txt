@@ -7,6 +7,7 @@ for(j in 1:sim_count){
                                y = y_sim[[j]], x = x, z = z_sim[[j]], 
                                site_id = site_id, neighbors = neighbors,
                                metrop_var_rho_trans = 0.60,
-                               metrop_var_phi_trans = 0.10)
+                               metrop_var_phi_trans = 0.10,
+                               likelihood_indicator = 0)
    }
 

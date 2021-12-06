@@ -14,6 +14,12 @@ Rcpp::List SpGPCW(int mcmc_samples,
                   arma::mat neighbors,
                   double metrop_var_rho_trans,
                   double metrop_var_phi_trans,
+                  int likelihood_indicator,
+                  Rcpp::Nullable<Rcpp::NumericVector> offset = R_NilValue,
+                  Rcpp::Nullable<double> a_r_prior = R_NilValue,
+                  Rcpp::Nullable<double> b_r_prior = R_NilValue,
+                  Rcpp::Nullable<double> a_sigma2_epsilon_prior = R_NilValue,
+                  Rcpp::Nullable<double> b_sigma2_epsilon_prior = R_NilValue,
                   Rcpp::Nullable<double> sigma2_beta_prior = R_NilValue,
                   Rcpp::Nullable<double> alpha_sigma2_theta_prior = R_NilValue,
                   Rcpp::Nullable<double> beta_sigma2_theta_prior = R_NilValue,
@@ -23,6 +29,8 @@ Rcpp::List SpGPCW(int mcmc_samples,
                   Rcpp::Nullable<double> beta_sigma2_eta_prior = R_NilValue,
                   Rcpp::Nullable<double> a_phi_prior = R_NilValue,
                   Rcpp::Nullable<double> b_phi_prior = R_NilValue,
+                  Rcpp::Nullable<double> r_init = R_NilValue,
+                  Rcpp::Nullable<double> sigma2_epsilon_init = R_NilValue,
                   Rcpp::Nullable<Rcpp::NumericVector> beta_init = R_NilValue,
                   Rcpp::Nullable<Rcpp::NumericMatrix> theta_init = R_NilValue,
                   Rcpp::Nullable<double> sigma2_theta_init = R_NilValue,
@@ -36,11 +44,17 @@ Rcpp::List SpGPCW(int mcmc_samples,
 int p_x = x.n_cols;
 int m = z.n_cols;
 int s = neighbors.n_cols;
+int n = y.size();
+
+arma::vec r(mcmc_samples); r.fill(0.00);
+arma::vec sigma2_epsilon(mcmc_samples); sigma2_epsilon.fill(0.00);
 arma::mat beta(p_x, mcmc_samples); beta.fill(0.00);
 Rcpp::List theta(mcmc_samples);
 for(int j = 0; j < mcmc_samples; ++j){
+  
    arma::mat theta_temp(s, m); theta_temp.fill(0.00);
    theta[j] = theta_temp;
+  
    }
 arma::vec sigma2_theta(mcmc_samples); sigma2_theta.fill(0.00);
 arma::vec rho(mcmc_samples); rho.fill(0.00);
@@ -49,17 +63,44 @@ arma::vec sigma2_eta(mcmc_samples); sigma2_eta.fill(0.00);
 arma::vec phi(mcmc_samples); phi.fill(0.00);
 arma::vec neg_two_loglike(mcmc_samples); neg_two_loglike.fill(0.00);
 
+arma::vec off_set(n); off_set.fill(0.00);
+if(offset.isNotNull()){
+  off_set = Rcpp::as<arma::vec>(offset);
+  }
+
 //Miscellaneous Information
 arma::vec diag_neighbors(s); diag_neighbors.fill(0.00);
 arma::mat z_star((s*m), m);
 for(int j = 0; j < s; ++j){
+  
    diag_neighbors(j) = sum(neighbors.row(j));
    z_star.submat(m*j, 0, ((j + 1)*m - 1), (m-1)) = eye(m, m);
+
    }
 arma::mat MCAR = diagmat(diag_neighbors) - 
                  neighbors;
 
 //Prior Information
+int a_r = 1;
+if(a_r_prior.isNotNull()){
+  a_r = Rcpp::as<int>(a_r_prior);
+  }
+
+int b_r = 50;
+if(b_r_prior.isNotNull()){
+  b_r = Rcpp::as<int>(b_r_prior);
+  }
+
+double a_sigma2_epsilon = 0.01;
+if(a_sigma2_epsilon_prior.isNotNull()){
+  a_sigma2_epsilon = Rcpp::as<double>(a_sigma2_epsilon_prior);
+  }
+
+double b_sigma2_epsilon = 0.01;
+if(b_sigma2_epsilon_prior.isNotNull()){
+  b_sigma2_epsilon = Rcpp::as<double>(b_sigma2_epsilon_prior);
+  }
+
 double sigma2_beta = 10000.00;
 if(sigma2_beta_prior.isNotNull()){
   sigma2_beta = Rcpp::as<double>(sigma2_beta_prior);
@@ -106,6 +147,16 @@ if(b_phi_prior.isNotNull()){
   }
 
 //Initial Values
+r(0) = a_r;
+if(r_init.isNotNull()){
+  r(0) = Rcpp::as<int>(r_init);
+  }
+
+sigma2_epsilon(0) = 1.00;
+if(sigma2_epsilon_init.isNotNull()){
+  sigma2_epsilon(0) = Rcpp::as<double>(sigma2_epsilon_init);
+  }
+
 beta.col(0).fill(0.00);
 if(beta_init.isNotNull()){
   beta.col(0) = Rcpp::as<arma::vec>(beta_init);
@@ -142,11 +193,16 @@ if(phi_init.isNotNull()){
   phi(0) = Rcpp::as<double>(phi_init);
   }
 
-Rcpp::List temporal_corr_info = temporal_corr_fun(m, phi(0));
+Rcpp::List temporal_corr_info = temporal_corr_fun(m, 
+                                                  phi(0));
 neg_two_loglike(0) = neg_two_loglike_update(y,
                                             x,
                                             z,
                                             site_id,
+                                            off_set,
+                                            likelihood_indicator,
+                                            r(0),
+                                            sigma2_epsilon(0),
                                             beta.col(0),
                                             theta[0]);
 
@@ -163,22 +219,76 @@ int acctot_rho_trans = 0;
 int acctot_phi_trans = 0;
 
 //Main Sampling Loop
+arma::vec w(n); w.fill(0.00);
+arma::vec gamma = y;
 for(int j = 1; j < mcmc_samples; ++j){
 
-   //w Update
-   Rcpp::List w_output = w_update(y,
-                                  x,
-                                  z,
-                                  site_id,
-                                  beta.col(j-1),
-                                  theta[j-1]);
-   arma::vec w = w_output[0];
-   arma::vec gamma = w_output[1];
-  
+   if(likelihood_indicator == 2){
+      
+     //r Update
+     r(j) = r_update(y,
+                     x,
+                     z,
+                     site_id,
+                     off_set,
+                     a_r,
+                     b_r,
+                     beta.col(j-1),
+                     theta[j-1]);
+      
+     //w Update
+     Rcpp::List w_output = w_update(y,
+                                    x,
+                                    z,
+                                    site_id,
+                                    off_set,
+                                    likelihood_indicator,
+                                    r(j),
+                                    beta.col(j-1),
+                                    theta[j-1]);
+     w = Rcpp::as<arma::vec>(w_output[0]);
+     gamma = Rcpp::as<arma::vec>(w_output[1]);
+      
+     }
+   
+   if(likelihood_indicator == 1){
+      
+     //sigma2_epsilon Update
+     sigma2_epsilon(j) = sigma2_epsilon_update(y,
+                                               x,
+                                               z,
+                                               site_id,
+                                               off_set,
+                                               a_sigma2_epsilon,
+                                               b_sigma2_epsilon,
+                                               beta.col(j-1),
+                                               theta[j-1]);
+     w.fill(1.00/sigma2_epsilon(j));
+      
+     }
+   
+   if(likelihood_indicator == 0){
+      
+     //w Update
+     Rcpp::List w_output = w_update(y,
+                                    x,
+                                    z,
+                                    site_id,
+                                    off_set,
+                                    likelihood_indicator,
+                                    r(j),
+                                    beta.col(j-1),
+                                    theta[j-1]);
+     w = Rcpp::as<arma::vec>(w_output[0]);
+     gamma = Rcpp::as<arma::vec>(w_output[1]);
+      
+     }
+   
    //beta Update
    beta.col(j) = beta_update(x, 
                              z,
                              site_id,
+                             off_set,
                              w,
                              gamma,
                              theta[j-1],
@@ -189,6 +299,7 @@ for(int j = 1; j < mcmc_samples; ++j){
                            x, 
                            z,
                            site_id,
+                           off_set,
                            neighbors,
                            w,
                            gamma,
@@ -211,6 +322,7 @@ for(int j = 1; j < mcmc_samples; ++j){
    //Only if rho_zero = 0
    rho(j) = 0;
    if(rho_zero == 0){
+      
      Rcpp::List rho_output = rho_update(rho(j-1),
                                         MCAR,
                                         theta[j],
@@ -224,6 +336,7 @@ for(int j = 1; j < mcmc_samples; ++j){
    
      rho(j) = Rcpp::as<double>(rho_output[0]);
      acctot_rho_trans = rho_output[1];
+     
      }
    
    //eta Update
@@ -265,6 +378,10 @@ for(int j = 1; j < mcmc_samples; ++j){
                                                x,
                                                z,
                                                site_id,
+                                               off_set,
+                                               likelihood_indicator,
+                                               r(j),
+                                               sigma2_epsilon(j),
                                                beta.col(j),
                                                theta[j]);
    
@@ -274,20 +391,28 @@ for(int j = 1; j < mcmc_samples; ++j){
      }
   
    if(((j + 1) % int(round(mcmc_samples*0.05)) == 0)){
+      
      double completion = round(100*((j + 1)/(double)mcmc_samples));
      Rcpp::Rcout << "Progress: " << completion << "%" << std::endl;
+     
      if(rho_zero == 0){
+       
        double accrate_rho_trans = round(100*(acctot_rho_trans/(double)j));
        Rcpp::Rcout << "rho Acceptance: " << accrate_rho_trans << "%" << std::endl;
+       
        }
+     
      double accrate_phi_trans = round(100*(acctot_phi_trans/(double)j));
      Rcpp::Rcout << "phi Acceptance: " << accrate_phi_trans << "%" << std::endl;
      Rcpp::Rcout << "*******************" << std::endl;
+     
      }
   
    }
                                   
-return Rcpp::List::create(Rcpp::Named("beta") = beta,
+return Rcpp::List::create(Rcpp::Named("r") = r,
+                          Rcpp::Named("sigma2_epsilon") = sigma2_epsilon,
+                          Rcpp::Named("beta") = beta,
                           Rcpp::Named("theta") = theta,
                           Rcpp::Named("sigma2_theta") = sigma2_theta,
                           Rcpp::Named("rho") = rho,
