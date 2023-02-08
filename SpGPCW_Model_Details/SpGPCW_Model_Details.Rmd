@@ -72,7 +72,7 @@ $Y_{ij}|\boldsymbol{\beta}, \boldsymbol{\theta}_i, \sigma^2_{\epsilon} \stackrel
 
 * Default setting: $a_{\sigma^2_{\epsilon}} = 0.01$, $b_{\sigma^2_{\epsilon}} = 0.01$; 
 
-* Default initial value: $\sigma^2_{\epsilon} = 1.00$;
+* Default initial value: $\sigma^2_{\epsilon} = 1.00$.
 
 ## Alternate Likelihood: Negative Binomial
 $Y_{ij}|\boldsymbol{\beta}, \boldsymbol{\theta}, r \stackrel{\text{ind}}{\sim} \text{Negative Binomial}\left\{r, \lambda_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}_i\right)\right\},\ i=1,...,s;\ j=1,...,n_i;$
@@ -81,9 +81,9 @@ $\text{ln}\left\{\frac{\lambda_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}
 
 * $r \sim \text{Discrete Uniform}\left[a_r, b_r\right];$ 
 
-* Default setting: $a_r = 1$, $b_r = 50$; 
+* Default setting: $a_r = 1$, $b_r = 100$; 
 
-* Default initial value: $r = a_r$;
+* Default initial value: $r = b_r$.
 
 ## Likelihood Indicator
 * likelihood_indicator $= 0$: Bernoulli; 
