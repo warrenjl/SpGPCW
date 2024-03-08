@@ -7,7 +7,7 @@ output:
 # SpGPCW: Spatially Varying Gaussian Process Model for Critical Window Estimation
 
 ## Statistical Model
-$$Y_{ij}|\boldsymbol{\beta}, \boldsymbol{\theta}_i \stackrel{\text{ind}}{\sim} \text{Bernoulli}\left\{p_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}_i\right)\right\},\ i=1,...,s;\ j=1,...,n_i;$$
+$$Y_{ij}|\boldsymbol{\beta}, \boldsymbol{\theta}_i \stackrel{\text{ind}}{\sim} \text{Binomial}\left\{c_{ij}, p_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}_i\right)\right\},\ i=1,...,s;\ j=1,...,n_i;$$
 
 $$\log\left\{\frac{p_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}_i\right)}{1 - p_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}_i\right)}\right\} = \textbf{x}_{ij}^{\text{T}} \boldsymbol{\beta} + \sum_{k=1}^{m_{ij}} \text{z}_{ijk} \theta_i\left(k\right);$$
 
@@ -86,7 +86,7 @@ $\text{ln}\left\{\frac{\lambda_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}
 * Default initial value: $r = b_r$.
 
 ## Likelihood Indicator
-* likelihood_indicator $= 0$: Bernoulli; 
+* likelihood_indicator $= 0$: Binomial; 
 
 * likelihood_indicator $= 1$: Gaussian;
 

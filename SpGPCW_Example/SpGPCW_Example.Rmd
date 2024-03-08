@@ -88,12 +88,13 @@ for(j in 1:s){
    }
 probs_true<-inv.logit(logit_p_true)
 hist(probs_true)
+trials<-rep(1, times=n)
 ```
 
 * Simulating the analysis dataset:
 ```{r}
 y<-rbinom(n=n, 
-          size=1, 
+          size=trials, 
           prob=probs_true)
 ```
 
@@ -104,6 +105,7 @@ results<-SpGPCW(mcmc_samples = 10000,
                 y = y, x = x, z = z, site_id = site_id, neighbors = neighbors,
                 metrop_var_rho_trans = 1.4,
                 metrop_var_phi_trans = 0.15,
+                trials = trials,
                 likelihood_indicator = 0)
 ```
 
