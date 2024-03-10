@@ -13,8 +13,8 @@ eta_update <- function(MCAR, z_star, theta, sigma2_theta, rho, sigma2_eta_old, p
     .Call(`_SpGPCW_eta_update`, MCAR, z_star, theta, sigma2_theta, rho, sigma2_eta_old, phi_old, corr_inv)
 }
 
-neg_two_loglike_update <- function(y, x, z, site_id, off_set, likelihood_indicator, r, sigma2_epsilon, beta, theta) {
-    .Call(`_SpGPCW_neg_two_loglike_update`, y, x, z, site_id, off_set, likelihood_indicator, r, sigma2_epsilon, beta, theta)
+neg_two_loglike_update <- function(y, x, z, site_id, off_set, tri_als, likelihood_indicator, r, sigma2_epsilon, beta, theta) {
+    .Call(`_SpGPCW_neg_two_loglike_update`, y, x, z, site_id, off_set, tri_als, likelihood_indicator, r, sigma2_epsilon, beta, theta)
 }
 
 phi_update <- function(phi_old, MCAR, theta, sigma2_theta, rho, eta, sigma2_eta, temporal_corr_info, a_phi, b_phi, metrop_var_phi_trans, acctot_phi_trans) {

@@ -92,8 +92,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // neg_two_loglike_update
-double neg_two_loglike_update(arma::vec y, arma::mat x, arma::mat z, arma::vec site_id, arma::vec off_set, int likelihood_indicator, int r, double sigma2_epsilon, arma::vec beta, arma::mat theta);
-RcppExport SEXP _SpGPCW_neg_two_loglike_update(SEXP ySEXP, SEXP xSEXP, SEXP zSEXP, SEXP site_idSEXP, SEXP off_setSEXP, SEXP likelihood_indicatorSEXP, SEXP rSEXP, SEXP sigma2_epsilonSEXP, SEXP betaSEXP, SEXP thetaSEXP) {
+double neg_two_loglike_update(arma::vec y, arma::mat x, arma::mat z, arma::vec site_id, arma::vec off_set, arma::vec tri_als, int likelihood_indicator, int r, double sigma2_epsilon, arma::vec beta, arma::mat theta);
+RcppExport SEXP _SpGPCW_neg_two_loglike_update(SEXP ySEXP, SEXP xSEXP, SEXP zSEXP, SEXP site_idSEXP, SEXP off_setSEXP, SEXP tri_alsSEXP, SEXP likelihood_indicatorSEXP, SEXP rSEXP, SEXP sigma2_epsilonSEXP, SEXP betaSEXP, SEXP thetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -102,12 +102,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type z(zSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type site_id(site_idSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type off_set(off_setSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type tri_als(tri_alsSEXP);
     Rcpp::traits::input_parameter< int >::type likelihood_indicator(likelihood_indicatorSEXP);
     Rcpp::traits::input_parameter< int >::type r(rSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2_epsilon(sigma2_epsilonSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type theta(thetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(neg_two_loglike_update(y, x, z, site_id, off_set, likelihood_indicator, r, sigma2_epsilon, beta, theta));
+    rcpp_result_gen = Rcpp::wrap(neg_two_loglike_update(y, x, z, site_id, off_set, tri_als, likelihood_indicator, r, sigma2_epsilon, beta, theta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -294,7 +295,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_SpGPCW_SpGPCW", (DL_FUNC) &_SpGPCW_SpGPCW, 34},
     {"_SpGPCW_beta_update", (DL_FUNC) &_SpGPCW_beta_update, 8},
     {"_SpGPCW_eta_update", (DL_FUNC) &_SpGPCW_eta_update, 8},
-    {"_SpGPCW_neg_two_loglike_update", (DL_FUNC) &_SpGPCW_neg_two_loglike_update, 10},
+    {"_SpGPCW_neg_two_loglike_update", (DL_FUNC) &_SpGPCW_neg_two_loglike_update, 11},
     {"_SpGPCW_phi_update", (DL_FUNC) &_SpGPCW_phi_update, 12},
     {"_SpGPCW_r_update", (DL_FUNC) &_SpGPCW_r_update, 9},
     {"_SpGPCW_rcpp_pgdraw", (DL_FUNC) &_SpGPCW_rcpp_pgdraw, 2},
