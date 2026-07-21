@@ -85,12 +85,32 @@ $\text{ln}\left\{\frac{\lambda_{ij}\left(\boldsymbol{\beta}, \boldsymbol{\theta}
 
 * Default initial value: $r = b_r$.
 
+## Alternate Likelihood: Conditional Logistic Regression
+For $1{:}1$ matched case-control data, let $l=1,...,L$ index matched pairs, with $\textbf{x}_{lij}$ and $\textbf{z}_{lij}$ denoting the covariate vectors for subject $j \in \{0,1\}$ (control, case) within pair $l$, both within spatial location $i$. The conditional likelihood, obtained by conditioning on the event that exactly one member of each pair is a case, is given as:
+
+\begin{align*}
+P\left(Y_{li1} = 1 | Y_{li0} + Y_{li1} = 1, \boldsymbol{\beta}, \boldsymbol{\theta}_i\right) &= \frac{\exp\left\{\eta_{li1}\right\}}{\exp\left\{\eta_{li1}\right\} + \exp\left\{\eta_{li0}\right\}},\ l=1,...,L; \\
+\eta_{lij} &= \textbf{x}_{lij}^{\text{T}} \boldsymbol{\beta} + \sum_{k=1}^{m_{li}} \text{z}_{lijk} \theta_i\left(k\right),\ j \in \{0,1\}.
+\end{align*}
+
+\begin{itemize}
+
+\item Requires the case and control in each matched pair to share the same spatial location $i$ (i.e., matching must occur within location).
+
+\item $\boldsymbol{\beta}$ excludes any intercept term (not identifiable under conditional likelihood, since it cancels within each matched pair);
+
+\item No additional parameters are introduced for this likelihood.
+
+\end{itemize}
+
 ## Likelihood Indicator
 * likelihood_indicator $= 0$: Binomial; 
 
 * likelihood_indicator $= 1$: Gaussian;
 
-* likelihood_indicator $= 2$: Negative binomial.
+* likelihood_indicator $= 2$: Negative binomial;
+
+* likelihood_indicator $= 3$: Conditional logistic regression (requires `pair_id`, a vector of integers identifying $1{:}1$ matched pairs).
 
 ## Special Notes
 * Do not center the exposures. Instead, we recommend that they are only scaled at each outcome time period (e.g., by interquartile range).
